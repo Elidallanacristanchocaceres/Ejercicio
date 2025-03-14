@@ -48,21 +48,17 @@ public class EpsUI {
             System.out.println("Id: " + eps.getId() + " Nombre: " + eps.getName());
         }
     }
-    public void FindEpsByName() {
-        try (Scanner sc = new Scanner(System.in)) {
-            System.out.println("Ingrese el nombre de la EPS");
-            String name = sc.nextLine();
-            List<Eps> epsConSalud = useCase.buscarPorNombreParcial(name);
-            epsConSalud.forEach(eps -> System.out.println(eps.getName()));
-        }
-    }
+    
         
     public void FindEpsByNameExact() {
         try (Scanner sc = new Scanner(System.in)) {
-            System.out.println("Ingrese el nombre de la EPS");
-            String name = sc.nextLine();
-            Optional<Eps> nuevaEps = useCase.buscarPorNombreExacto(name);
-            nuevaEps.ifPresent(eps -> System.out.println("Encontrada: " + eps.getName()));
+            System.out.println("Ingrese el nombre de la EPS:");
+            String name = sc.nextLine(); // Usar nextLine() para leer la entrada completa
+            Optional<Eps> epsOptional = useCase.buscarPorNombreExacto(name);
+            epsOptional.ifPresentOrElse(
+                eps -> System.out.println("El ID de la EPS '" + name + "' es: " + eps.getId()),
+                () -> System.out.println("No se encontró ninguna EPS con el nombre: " + name)
+            );
         }
     }
 
@@ -88,9 +84,14 @@ public class EpsUI {
             epsConSan.forEach(eps -> System.out.println(eps.getName()));
         }
     }
-    public Map<Integer, Eps> FindAllEps() {
-        return  useCase.findAllAsMap();
-        //epsMap.forEach((id, eps) -> System.out.println("ID: " + id + ", Nombre: " + eps.getName()));
+    public void FindAllEps() {
+        Map<Integer, Eps> epsMap = useCase.findAllAsMap();
+        if (epsMap.isEmpty()) {
+            System.out.println("No se encontraron EPS en la base de datos.");
+        } else {
+            epsMap.forEach((id, eps) -> 
+                System.out.println("ID: " + id + ", Nombre: " + eps.getName())
+            );
+        }
     }
-
 }
